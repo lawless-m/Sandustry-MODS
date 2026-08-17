@@ -1,0 +1,11 @@
+{
+	"manifestVersion": 1,
+	"id": "matt.wired-cells",
+	"name": "Wired Cells",
+	"version": "0.1.0",
+	"apiVersion": 1,
+	"entry": "main.js",
+	"description": "Energy cells emit a signal while they hold charge, so you can build your own power logic from the in-game gates.",
+	"author": "Matt",
+	"loadOrder": 0
+}
