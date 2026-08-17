@@ -5,7 +5,7 @@
 	"version": "1.0.0",
 	"apiVersion": 1,
 	"entry": "main.js",
-	"description": "Energy cells emit a signal while they hold charge, so you can build your own power logic from the in-game gates.",
+	"description": "Energy cells emit a signal while they hold charge — both copper cells (Power Brick) and Florinol Batteries. Wire one to your logic gates and build your own latch; which cell you attach to sets the threshold.",
 	"author": "Matt",
 	"loadOrder": 0,
 	"configSchema": {
