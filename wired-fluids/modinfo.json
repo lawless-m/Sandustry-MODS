@@ -1,0 +1,11 @@
+{
+	"manifestVersion": 1,
+	"id": "matt.wired-fluids",
+	"name": "Wired Fluids",
+	"version": "1.0.0",
+	"apiVersion": 1,
+	"entry": "main.js",
+	"description": "Allow Pumps and Liquid Vents to be controlled by circuits.",
+	"author": "Matt",
+	"loadOrder": 0
+}
