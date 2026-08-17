@@ -1,0 +1,11 @@
+{
+	"manifestVersion": 1,
+	"id": "matt.energy-sensors",
+	"name": "Energy Sensors",
+	"version": "1.0.0",
+	"apiVersion": 1,
+	"entry": "main.js",
+	"description": "Presence and Signal Sensors store energy, so they report a power network's charge. Presence Sensor = has any charge, Signal Sensor = fully charged. Build your own latch from the logic gates.",
+	"author": "Matt",
+	"loadOrder": 0
+}
