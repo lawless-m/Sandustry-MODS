@@ -146,6 +146,46 @@ list is an alternative way to stop one.
 
 ---
 
+### What `sandkit` actually gives you
+
+Bigger than it looks. From `dist/js/external-mod-runtime.js`:
+
+```js
+sandkit = { apiVersion, state, api, engine, enums, react }
+sandkit.engine = { api: FH, state }   // FH = the internal framework the
+                                      // game's own built-in mods use
+```
+
+So **`sandkit.state` is the live game state** and **`sandkit.engine.api` is `FH`** — you
+are not limited to `sandkit.api`. `api` itself carries ~35 namespaces including
+`triggers`, `schedule`, `hooks`, `storage`, `world`, `workers`, `rendering`, `player`.
+
+`api.triggers.register(id, { interval, callback })` is the general-purpose polling
+loop; interval is in ms.
+
+### Signals: receiving is public, emitting is not
+
+`api.signals` exposes **only** `targets.register(type, cb)`. The string `sender`
+appears nowhere in the mod runtime. To make something emit you must reach
+`sandkit.state.session.mods.signals` directly — unsupported, and liable to move.
+
+Two things are needed, and missing either one fails quietly:
+
+1. **Make it wirable.** The Signal Linker's test is exactly
+   `senderTypes.has(structure.type)` plus a build-permission check.
+   ```js
+   signals.senderTypes.add("powerBrick");
+   signals.senderOutputGetters.set("powerBrick", (state, s) => ...);
+   ```
+2. **Push the state.** `senderOutputGetters` is consulted **only when a link is
+   created**, to seed that link's stored `on` flag. Nothing polls it afterwards —
+   the engine's own senders call `setAll()` when their state changes. Register the
+   getter and stop there and your wire is frozen at whatever it was when drawn.
+
+   Links live at `signals.links["x,y"]` as arrays of `{x, y, on}` pointing at
+   receivers. Set `link.on`, then `signals.dirtyReceivers.add("x,y")` for the
+   receiver, and the engine re-applies on the next frame. See `wired-cells/`.
+
 ## 5. Investigating the game yourself
 
 This is the part that actually matters. The game is Electron; all logic is readable JavaScript.

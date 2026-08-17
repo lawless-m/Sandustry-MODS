@@ -7,5 +7,13 @@
 	"entry": "main.js",
 	"description": "Energy cells emit a signal while they hold charge, so you can build your own power logic from the in-game gates.",
 	"author": "Matt",
-	"loadOrder": 0
+	"loadOrder": 0,
+	"configSchema": {
+		"enabled": {
+			"type": "boolean",
+			"default": true,
+			"labelKey": "Wired Cells enabled",
+			"descriptionKey": "If this row is visible in Options > Mods, the mod loaded."
+		}
+	}
 }
