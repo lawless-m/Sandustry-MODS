@@ -2,11 +2,17 @@
 
 Steam Workshop mods for **Sandustry** (Steam appid `2764460`, game version 0.5.3).
 
+**Writing another one? → [MODDING.md](MODDING.md)** — the full recipe: branch setup, manifest
+rules, the API, how to read the game's own JavaScript, publishing, and every gotcha found the
+hard way.
+
 ## Contents
 
-| Mod | What it does |
-|---|---|
-| `wired-fluids/` | Puts **Pumps** and **Liquid Vents** on the signal network, so circuits can switch them |
+| Mod | What it does | Workshop |
+|---|---|---|
+| `wired-fluids/` | Puts **Pumps** and **Liquid Vents** on the signal network, so circuits can switch them | [3785225389](https://steamcommunity.com/sharedfiles/filedetails/?id=3785225389) |
+
+`tools/extract-asar.py` unpacks the game's `app.asar` into `_game/` for reference (gitignored).
 
 ## Prerequisite: the Steam `mods` branch
 
