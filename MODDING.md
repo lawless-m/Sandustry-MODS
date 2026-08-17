@@ -237,10 +237,9 @@ it back after publishing. `install-dev.sh` preserves it across reinstalls.
 - **The whole mod folder ships** on upload.
 - **First publish is unlisted**, deliberately.
 - A game update will eventually break a mod; bump `version` and re-upload.
-- **Don't build anything on the Presence or Signal Sensor.** Tried and abandoned:
-  registering them as energy `storage` does work — charge is held as element pixels
-  (copper, on a copper network) and they visibly fill. But their signal output
-  switches on when charge arrives and **never switches off when it drains**, so they
-  are useless as an indicator. Confirmed in game for both sensors. If you need a
-  charge signal, make the cell itself a sender (see `wired-cells/`) rather than
-  sensing its contents.
+- **Don't try to sense a cell's charge with the Presence or Signal Sensor.** Tried
+  and abandoned. Registering a sensor as energy `storage` did not make it report
+  charge — it just **filled up with liquid copper**, and the sensor then reported
+  the copper, since both sensors trigger on elements being present rather than on
+  stored energy. Neither sensor ever tracked charge. If you want a charge signal,
+  make the cell itself a signal sender (see `wired-cells/`).
