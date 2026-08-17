@@ -10,8 +10,12 @@
 //     building:placed, structures:moved, structures:pasted, element:moved
 // and element:moved only fires when an element crosses a tile boundary.
 //
-// Energy ARRIVING is elements moving in  -> fires -> sensor goes true.
-// Energy DRAINING is elements consumed in place -> no movement, no event,
+// Charge on a copper network is held as actual copper element pixels — a sensor
+// registered as storage visibly fills with copper. That is why a sensor can see
+// charge at all, and why losing it is invisible:
+//
+// Energy ARRIVING is pixels moving in -> element:moved fires -> sensor goes true.
+// Energy DRAINING is pixels consumed where they sit -> no movement, no event,
 // no recompute -> the sensor stays true forever.
 //
 // Confirmed in game for BOTH sensors — the Presence Sensor ("any element") and
