@@ -14,8 +14,11 @@
 // Energy DRAINING is elements consumed in place -> no movement, no event,
 // no recompute -> the sensor stays true forever.
 //
-// Confirmed in game: the icon updates when charge arrives and never reverts on
-// drain; a sensor next to nominally empty stores reads true indefinitely.
+// Confirmed in game for BOTH sensors — the Presence Sensor ("any element") and
+// the Signal Sensor ("4x4 full of elements") behave identically: the icon updates
+// when charge arrives and never reverts on drain, and a sensor next to nominally
+// empty stores reads true indefinitely. So this is the sensor family's shared
+// caching, not a quirk of one threshold.
 //
 // Not patchable from a mod — the Set and its update function are private to the
 // game's own signals mod. If the developers add invalidation on element removal,
