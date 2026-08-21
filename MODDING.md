@@ -186,6 +186,112 @@ Two things are needed, and missing either one fails quietly:
    receivers. Set `link.on`, then `signals.dirtyReceivers.add("x,y")` for the
    receiver, and the engine re-applies on the next frame. See `wired-cells/`.
 
+### On-screen UI
+
+`api.ui` is fully supported and does more than it looks:
+
+```js
+api.ui.toast("plain text", { duration: 4000, cooldown, cooldownKey, variant })
+api.ui.alert(message, title)                  // -> Promise
+api.ui.confirm(message, title)                // -> Promise<boolean>
+api.ui.prompt(message, defaultValue, placeholder, title, allowCopy)
+                                              // -> Promise<string|null>, null on cancel
+api.ui.inject(componentId, Component)         // a React component on the HUD;
+                                              // returns an unregister function
+api.ui.overlays.register("global"|"hotbar", id, () => reactNode)
+api.ui.overlays.update("global")              // force a re-render
+```
+
+- **Toasts and dialogs take plain strings.** They are run through `t()`, which returns
+  the key unchanged when there is no translation, so English text passes straight
+  through. `api.i18n.register(locale, entries)` is there if you want real translations.
+- **`inject` is the one you want for a panel.** It mounts your component inside a
+  full-screen `pointer-events-none` overlay, each entry wrapped in its own
+  `pointer-events-auto` div and an error boundary — so clicks reach your buttons and a
+  throw blanks your panel rather than the game.
+- **`sandkit.react` is the game's own React namespace** — `createElement`, `useState`,
+  `useEffect` all work, and hooks survive re-renders because the component identity is
+  stable. There is no JSX in a mod file; write `createElement` (aliasing it to `h` reads
+  fine).
+- **Nothing pushes state at your component.** It gets no props. Read `sandkit.state`
+  yourself on a `setInterval` tick, and call `api.ui.overlays.update("global")` when you
+  change something and want the panel to catch up at once.
+- **Do not lean on Tailwind classes.** The game's CSS is compiled from the game's own
+  markup, so only the utilities it happens to use exist — `w-64` and `truncate` are in,
+  `right-4`, `w-2`, `py-0.5` and any arbitrary value you invent are not. Inline `style`
+  objects are the reliable choice.
+
+Keys, for a panel toggle:
+
+```js
+api.input.registerBinding("MyPanel", ["KeyL"], {
+  displayNameKey: "Toggle my panel",   // plain text is fine
+  category: "My Mod",
+  handlers: { down: () => { ... } },   // no arguments; reach for sandkit.state
+});
+```
+
+Key names are `KeyboardEvent.code` plus modifiers and mouse/wheel: `"KeyL"`,
+`"Control+KeyZ"`, `"MouseRight"`, `"Alt+WheelDown"`. Already taken by the base game:
+A D W S Q R T U V C X P N G B E F M, Space, Shift, Tab, Alt, Control, Escape, Backspace,
+F2, F4, F5, F9, and Ctrl+C/V/X/Z/H.
+
+### Reading and clicking signal receivers
+
+Both need `state.session.mods.signals`, same private object as above.
+
+- **A receiver's state** is `signals.incomingByReceiver.get("x,y")` — an array of links;
+  the receiver is on if any of them has `on`. That is exactly what the engine's own
+  `getCombinedAt` does.
+- **Never** `api.signals.targets.register("signalLamp", cb)` to watch a base-game
+  structure. `register` is a `Map.set` on `receiverApply`, so it *evicts* the game's own
+  handler — lamps stop lighting up, buffers stop forwarding. Read the state instead.
+- **A click on a structure** is `signals.interactableHandlers.set(type, (state, s) => ...)`.
+  The signals module intercepts `action:intercept`, runs your handler and cancels the
+  click, and draws a white hover outline on any interactable type. It swallows *every*
+  click on that type, so register it only while your mode is active and delete it after.
+  See `signal-markers/`.
+
+### Putting a marker on the minimap
+
+The minimap is a PIXI canvas in a `document.body` div (`[data-role="minimap-overlay"]`),
+and its world→map projection lives in module-private variables — zoom, offset, buffer
+size — none of which are on `state`. So **nothing can draw on it from outside**. What it
+does do, every frame, is render two marker layers:
+
+```js
+ie.FH.progression.getWaypoints(e)   // pulsing yellow ring; arrow at the edge when off screen
+ie.FH.portals.getMarkers(e)         // cyan diamonds
+```
+
+`getWaypoints` reads `storyProgression.waypoints`, which the public storage API reaches
+by name, so anything can join that layer:
+
+```js
+const prog = api.storage.ensure("storyProgression");
+(prog.waypoints ||= []).push({
+  id: "my-mod:whatever",
+  position: { x, y },        // world PIXELS: cell * cellSize
+  radius: 0,
+  label: "shown nowhere on the map",
+  active: true,              // the renderer skips !active
+  isHelper: false,           // helper waypoints drive story triggers by proximity
+  showOnMap: true,
+});
+```
+
+- `api.rendering.getGridMetrics()` gives `{ cellSize, snapGridCellSize }` — 4 and 4, so a
+  structure is 16px and its middle is `cell * cellSize + 8`.
+- **Every waypoint is the game's objective yellow (`0xFFFF00`) and carries no label on the
+  map.** A marker is present or absent; there is no colour or text to encode state with.
+  Toggling `active`, or adding and removing the entry, is the only channel you have.
+- Markers show on the full Map screen (**M**) too, at double size.
+- **They are saved state.** Strip yours on the `store:save` event — it fires *before* the
+  store is structured-cloned into the save worker's `postMessage`, so removing them there
+  keeps saves clean, and your next tick puts them back. `signal-markers/` does this.
+- Give every entry an id with your mod's prefix; that is what makes cleanup, and a prune
+  at `game:ready` after a crash, a one-liner.
+
 ## 5. Investigating the game yourself
 
 This is the part that actually matters. The game is Electron; all logic is readable JavaScript.

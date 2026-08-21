@@ -1,0 +1,19 @@
+{
+	"manifestVersion": 1,
+	"id": "matt.signal-markers",
+	"name": "Signal Markers",
+	"version": "1.1.0",
+	"apiVersion": 1,
+	"entry": "main.js",
+	"description": "A HUD panel listing every Signal Lamp on the map with its name and live ON/OFF state. Press L to show it. Name a lamp by clicking its row, or turn on Label mode and click the lamp itself. Pin a lamp and it is marked on the minimap whenever it is ON. Names and pins are saved with the world.",
+	"author": "Matt",
+	"loadOrder": 0,
+	"configSchema": {
+		"enabled": {
+			"type": "boolean",
+			"default": true,
+			"labelKey": "Signal Markers enabled",
+			"descriptionKey": "If this row is visible in Options > Mods, the mod loaded."
+		}
+	}
+}

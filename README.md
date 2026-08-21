@@ -11,6 +11,9 @@ hard way.
 | Mod | What it does | Workshop |
 |---|---|---|
 | `wired-fluids/` | Puts **Pumps** and **Liquid Vents** on the signal network, so circuits can switch them | [3785225389](https://steamcommunity.com/sharedfiles/filedetails/?id=3785225389) |
+| `wired-cells/` | Energy cells emit a signal while they hold charge, so circuits can read them | [3785409320](https://steamcommunity.com/sharedfiles/filedetails/?id=3785409320) |
+| `signal-markers/` | A HUD panel listing every **Signal Lamp** by name with its live ON/OFF state, and pinned ones marked on the minimap | not published |
+| `recipe-logbook/` | A recipe book that starts empty and fills in as you play — a recipe is written down only once you have made it | [3787330564](https://steamcommunity.com/sharedfiles/filedetails/?id=3787330564) |
 
 `tools/extract-asar.py` unpacks the game's `app.asar` into `_game/` for reference (gitignored).
 

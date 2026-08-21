@@ -1,0 +1,19 @@
+{
+	"manifestVersion": 1,
+	"id": "matt.recipe-logbook",
+	"name": "Recipe Logbook",
+	"version": "1.0.0",
+	"apiVersion": 1,
+	"entry": "main.js",
+	"description": "A recipe book that starts empty and fills itself in as you play. A recipe is written down only once you have actually made it — so 'what is all this Redsand for?' stays your question to answer. Reads the live recipe registry, so mod-added recipes appear too. Press K.",
+	"author": "Matt",
+	"loadOrder": 0,
+	"configSchema": {
+		"enabled": {
+			"type": "boolean",
+			"default": true,
+			"labelKey": "Recipe Logbook enabled",
+			"descriptionKey": "If this row is visible in Options > Mods, the mod loaded. Press K in game."
+		}
+	}
+}
