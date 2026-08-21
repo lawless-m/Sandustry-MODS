@@ -6,7 +6,7 @@
 //   L                    show / hide the panel (rebindable in Options > Controls)
 //   click a row          name that lamp (blank clears it)
 //   Label mode + click   name the lamp you click in the world
-//   pin a row            mark that lamp on the minimap while it is ON
+//   pin a row            mark that lamp on the minimap, lit or not
 //
 // Names and pins are stored in the save, keyed by cell, so they survive a reload.
 //
@@ -35,8 +35,10 @@
 // FH.portals.getMarkers(state). Waypoints live at storyProgression.waypoints,
 // which api.storage.ensure reaches by name, so a pinned lamp joins that layer.
 // Every waypoint is drawn in the game's objective yellow with no label, so the
-// marker cannot carry the lamp's name or colour — it is present or it is not,
-// which is why a pin tracks the lamp being ON.
+// marker cannot carry the lamp's name or colour — it is present or it is not.
+// That single bit tracks PINNED, not lit: a lamp gone dark is exactly the one
+// you need to walk to, so hiding it when it goes OFF would take the marker away
+// at the moment it became useful. Read the state in the panel, find it on the map.
 //
 // Those waypoints are saved state, so ours are stripped on "store:save" (which
 // fires before postMessage structured-clones the store) and rebuilt on the next
@@ -142,7 +144,7 @@ async function rename(x, y) {
 //
 // The minimap draws every entry in storyProgression.waypoints as a pulsing
 // yellow ring, and an arrow at the edge when it is off screen. A pinned lamp
-// gets one while it is ON, and loses it when it goes OFF.
+// keeps its marker whatever its state — pin it and you can find it again.
 
 const MARK = "signal-markers:";
 
@@ -168,7 +170,7 @@ function syncMarkers() {
 
 	const wanted = new Map();
 	for (const lamp of lamps()) {
-		if (lamp.pinned && lamp.on) wanted.set(MARK + cell(lamp.x, lamp.y), lamp);
+		if (lamp.pinned) wanted.set(MARK + cell(lamp.x, lamp.y), lamp);
 	}
 
 	for (let i = list.length - 1; i >= 0; i--) {
@@ -207,7 +209,7 @@ function setPinned(x, y, on) {
 	const pinned = pins();
 	if (on) pinned[cell(x, y)] = true;
 	else delete pinned[cell(x, y)];
-	console.log(`[signal-markers] pin ${x},${y} = ${on} (marker shows while the lamp is ON)`);
+	console.log(`[signal-markers] pin ${x},${y} = ${on}`);
 	syncMarkers();
 	api.ui.overlays.update("global");
 }
@@ -434,8 +436,8 @@ function Row({ lamp }) {
 						setPinned(lamp.x, lamp.y, !lamp.pinned);
 					},
 					title: lamp.pinned
-						? "Pinned — marked on the minimap while ON"
-						: "Pin: mark on the minimap while ON",
+						? "Pinned — marked on the minimap, lit or not"
+						: "Pin: mark on the minimap, lit or not",
 				},
 				"\ud83d\udccd",
 			),
