@@ -1,0 +1,19 @@
+{
+	"manifestVersion": 1,
+	"id": "matt.perf-profiler",
+	"name": "Perf Profiler",
+	"version": "0.1.0",
+	"apiVersion": 1,
+	"entry": "main.js",
+	"description": "A live per-tick simulation performance HUD. Reads the engine's own shared timing arrays — manager tick duration, its counters, and the per-worker completion times — and puts them on screen as they happen, so you can see where a frame's time actually goes instead of guessing. Press J.",
+	"author": "Matt",
+	"loadOrder": 0,
+	"configSchema": {
+		"enabled": {
+			"type": "boolean",
+			"default": true,
+			"labelKey": "Perf Profiler enabled",
+			"descriptionKey": "If this row is visible in Options > Mods, the mod loaded. Press J in game."
+		}
+	}
+}
